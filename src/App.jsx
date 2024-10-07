@@ -1,20 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TOdoInput from "./componants/input";
 import TaskList from "./componants/taskList";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
   const [inputArr, setInputArr] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    if (storedTasks) setInputArr(storedTasks);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(inputArr));
+  }, [inputArr]);
+
   const addInputValue = () => {
     if (inputValue.trim() === "") {
       setErrorMessage("Task cannot be empty!");
     } else {
-      setInputArr((prev) => [...prev, inputValue]);
+      const newTask = { text: inputValue, completed: false };
+      setInputArr((prev) => [...prev, newTask]);
       setInputValue("");
-      setErrorMessage(""); // Clear error message
+      setErrorMessage("");
     }
+  };
+
+  const deleteValue = (input) => {
+    setInputArr((prev) => prev.filter((value) => value.text !== input));
+  };
+
+  const complateTaskCheck = (e, index) => {
+    const updatedTasks = inputArr.map((value, i) =>
+      i === index ? { ...value, completed: e.target.checked } : value
+    );
+    setInputArr(updatedTasks);
   };
 
   return (
@@ -39,7 +61,11 @@ function App() {
             inputValue={inputValue}
             setInputValue={setInputValue}
           />
-          <TaskList inputArr={inputArr} />
+          <TaskList
+            inputArr={inputArr}
+            deleteValue={deleteValue}
+            complateTaskCheck={complateTaskCheck}
+          />
         </div>
       </div>
     </>
