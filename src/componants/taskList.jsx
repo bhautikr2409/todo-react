@@ -18,7 +18,9 @@ export default function TaskList({ inputArr, deleteValue, complateTaskCheck }) {
                 />
                 <li
                   className={`list-none font-medium text-2xl ${
-                    input.completed ? "line-through text-gray-400" : ""
+                    input.completed
+                      ? "line-through text-gray-400 min-w-96 bg-gray-300"
+                      : ""
                   }`}>
                   {input.text}
                 </li>
